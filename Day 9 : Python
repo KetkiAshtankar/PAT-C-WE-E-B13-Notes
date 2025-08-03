@@ -1,0 +1,32 @@
+Download Python from : https://www.python.org/downloads/
+check version = python -- version 
+
+
+write code in vs code to :
+print("Hello, World!")
+# Operators
+
+# Arithmentic Operators
+
+
+a = 10
+b = 5   
+
+print(a + b)  # Addition
+print(a - b)  # Subtraction
+print(a * b)  # Multiplication
+print(a / b)  # Division    
+
+# Comparison Operators
+
+print(a == b)  # Equal to
+print(a != b)  # Not equal to
+print(a > b)   # Greater than
+print(a < b)   # Less than
+
+# Logical Operators
+print(a > 0 and b > 0)  # Logical AND
+print(a > 0 or b < 0)   # Logical OR
+print(not (a > b))  # Logical NOT
+
+
