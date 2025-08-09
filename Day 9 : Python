@@ -55,3 +55,11 @@ Remember Loops as :
 For loop: like following a checklist — “Do task for each item on the list.”
 
 While loop: like “keep doing this until the condition changes” — e.g., “Keep studying until you pass the test.”
+
+
+
+#  Nested loop — a loop inside another loop:
+
+for i in range(1, 4):
+    for j in range(1, 4):
+        print(i, j)
