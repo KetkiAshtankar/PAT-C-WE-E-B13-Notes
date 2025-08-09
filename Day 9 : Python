@@ -29,4 +29,12 @@ print(a > 0 and b > 0)  # Logical AND
 print(a > 0 or b < 0)   # Logical OR
 print(not (a > b))  # Logical NOT
 
+If Else Condition :
 
+age = int(input("Enter your age: "))
+if age > 18:
+    print("You are a Adult.")
+elif age >= 13:
+    print("You are a Teenager.")
+else:
+    print("You are a Child.")
