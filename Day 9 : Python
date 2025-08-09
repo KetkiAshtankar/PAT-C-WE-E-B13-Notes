@@ -63,3 +63,24 @@ While loop: like “keep doing this until the condition changes” — e.g., “
 for i in range(1, 4):
     for j in range(1, 4):
         print(i, j)
+
+
+# Guess the number game
+import random
+
+number = random.randint(1, 100)
+attepts = 0
+
+print ("Welcome to the Guess the Number Game!")
+
+while True:
+    guess = int(input("Enter your guess: "))
+    attepts += 1
+    
+    if guess < number:
+        print("Too low! Try again.")
+    elif guess > number:
+        print("Too high! Try again.")
+    else:
+        print(f"Congratulations! You've guessed the number {number} in {attepts} attempts.")
+        break
