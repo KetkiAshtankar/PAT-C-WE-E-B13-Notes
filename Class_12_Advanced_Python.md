@@ -1,4 +1,4 @@
-# 📘 Python Concepts – Detailed Notes
+# 📘 Advanced Python
 
 ## 🔹 1. Lambda Function
 
