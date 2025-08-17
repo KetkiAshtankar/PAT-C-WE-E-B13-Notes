@@ -349,3 +349,206 @@ Matches:
 * It’s like giving your program **super-search powers** 🔍.
 * Start small (`.`, `\d`, `[a-z]`) → then move to **groups, backreferences, and lookaheads**.
 
+---
+
+# 🐍 Python `re` (Regular Expressions) Functions
+
+The `re` module in Python provides all the important functions to **search, match, split, replace, and validate** text using **patterns**.
+
+Import first:
+
+```python
+import re
+```
+
+---
+
+## 🔹 1. `re.match(pattern, string)`
+
+* **Checks ONLY at the beginning** of the string.
+* Returns a match object if found, else `None`.
+
+```python
+import re
+
+text = "pizza is tasty"
+
+match = re.match(r"pizza", text)
+print(match.group())   # pizza ✅
+
+match = re.match(r"tasty", text)
+print(match)   # None ❌ (not at start)
+```
+
+---
+
+## 🔹 2. `re.search(pattern, string)`
+
+* **Searches anywhere** in the string.
+* Returns the **first match**.
+
+```python
+text = "I love pizza with cheese"
+
+res = re.search(r"pizza", text)
+print(res.group())  # pizza ✅
+
+res = re.search(r"cheese", text)
+print(res.group())  # cheese ✅
+```
+
+---
+
+## 🔹 3. `re.findall(pattern, string)`
+
+* Returns **all matches** as a list.
+
+```python
+text = "My order: 2 pizzas, 3 burgers, and 4 pizzas more"
+
+numbers = re.findall(r"\d+", text)  
+print(numbers)  # ['2', '3', '4'] ✅
+
+words = re.findall(r"pizza", text)
+print(words)  # ['pizza', 'pizza']
+```
+
+---
+
+## 🔹 4. `re.finditer(pattern, string)`
+
+* Returns an **iterator** with match objects.
+* More powerful than `findall` (you get position + match).
+
+```python
+text = "pizza pizza burger"
+
+for m in re.finditer(r"pizza", text):
+    print(m.group(), "at position", m.start())
+```
+
+**Output:**
+
+```
+pizza at position 0
+pizza at position 6
+```
+
+---
+
+## 🔹 5. `re.sub(pattern, repl, string)`
+
+* Replace all matches with something else.
+
+```python
+text = "I eat pizza, pizza, pizza!"
+
+new_text = re.sub(r"pizza", "burger", text)
+print(new_text)  
+# I eat burger, burger, burger!
+```
+
+---
+
+## 🔹 6. `re.subn(pattern, repl, string)`
+
+* Same as `sub`, but returns a tuple:
+  `(new_string, number_of_replacements)`
+
+```python
+text = "pizza pizza pizza"
+
+res = re.subn(r"pizza", "pasta", text)
+print(res)  # ('pasta pasta pasta', 3)
+```
+
+---
+
+## 🔹 7. `re.split(pattern, string)`
+
+* Split string by regex pattern.
+
+```python
+text = "one,two;three four"
+
+parts = re.split(r"[,; ]", text)
+print(parts)  
+# ['one', 'two', 'three', 'four']
+```
+
+---
+
+## 🔹 8. `re.compile(pattern)`
+
+* Compiles regex into an object for **reuse**.
+
+```python
+pattern = re.compile(r"pizza")
+
+print(pattern.findall("pizza burger pizza"))  
+# ['pizza', 'pizza']
+```
+
+---
+
+## 🔹 9. Match Object Methods
+
+If a match is found, you can use:
+
+```python
+text = "Order: 2 pizzas"
+
+m = re.search(r"\d+", text)
+
+print(m.group())   # 2 (matched text)
+print(m.start())   # 7 (start index)
+print(m.end())     # 8 (end index)
+print(m.span())    # (7, 8)
+```
+
+---
+
+## 🔹 10. Flags in Regex (`re.I`, `re.M`, `re.S`)
+
+You can add **flags** to change regex behavior.
+
+```python
+text = "Pizza\nis tasty"
+
+# Case insensitive
+print(re.findall(r"pizza", text, re.I))  
+# ['Pizza']
+
+# Multiline (^ matches start of each line)
+print(re.findall(r"^is", text, re.M))  
+# ['is']
+
+# Dot matches newline
+print(re.findall(r".+", text, re.S))  
+# ['Pizza\nis tasty']
+```
+
+---
+
+# 🍕 Layman Example: Pizza Ordering
+
+```python
+order = "2 pizzas, 1 burger, 3 pizzas, 5 cokes"
+
+# Find all numbers
+print(re.findall(r"\d+", order))  
+# ['2', '1', '3', '5']
+
+# Replace pizza with pasta
+print(re.sub(r"pizzas?", "pasta", order))  
+# 2 pasta, 1 burger, 3 pasta, 5 cokes
+
+# Find pizza count
+for m in re.finditer(r"pizzas?", order):
+    print("Found", m.group(), "at", m.span())
+```
+
+---
+
+✅ With these 10 functions + flags, you can handle **95% of regex use cases in Python**.
+
