@@ -218,3 +218,134 @@ print(re.findall(r"Pizza", text))  # ['Pizza', 'Pizza']
 | **Decorator** | Add toppings automatically                 |
 | **Regex**     | Find pizza names/numbers in text           |
 
+
+
+---
+
+## 🟢 Basics of Regex
+
+| Symbol  | Meaning                               | Example   | Matches                           |
+| ------- | ------------------------------------- | --------- | --------------------------------- |
+| `.`     | Any single character (except newline) | `p.t`     | `pat`, `pet`, `p9t`               |
+| `^`     | Start of string                       | `^Hello`  | `Hello World` ✅, `Hi Hello` ❌     |
+| `$`     | End of string                         | `world$`  | `Hello world` ✅, `world peace` ❌  |
+| `*`     | 0 or more repetitions                 | `a*`      | `""`, `a`, `aa`, `aaaa`           |
+| `+`     | 1 or more repetitions                 | `a+`      | `a`, `aa`, `aaaa` (but not empty) |
+| `?`     | 0 or 1 occurrence (optional)          | `colou?r` | `color`, `colour`                 |
+| `{n}`   | Exactly `n` times                     | `a{3}`    | `aaa`                             |
+| `{n,}`  | At least `n` times                    | `a{2,}`   | `aa`, `aaa`, `aaaa...`            |
+| `{n,m}` | Between `n` and `m` times             | `a{2,4}`  | `aa`, `aaa`, `aaaa`               |
+
+---
+
+## 🟡 Character Classes (Matching Groups of Characters)
+
+| Pattern       | Meaning                      | Example     | Matches                    |
+| ------------- | ---------------------------- | ----------- | -------------------------- |
+| `[abc]`       | Match `a` or `b` or `c`      | `b[aeiou]g` | `bag`, `beg`, `big`, `bug` |
+| `[^abc]`      | NOT `a`, `b`, or `c`         | `[^0-9]`    | Any non-digit              |
+| `[a-z]`       | Any lowercase letter         | `[a-z]{3}`  | `abc`, `xyz`               |
+| `[A-Z]`       | Any uppercase letter         | `[A-Z]{2}`  | `AB`, `XY`                 |
+| `[0-9]`       | Any digit                    | `\d`        | `5`, `9`                   |
+| `[a-zA-Z0-9]` | Letters + digits             | `\w`        | `hello123`                 |
+| `.`           | Any character except newline | `c.t`       | `cat`, `cut`, `c9t`        |
+
+---
+
+## 🔵 Predefined Character Classes (Shortcuts)
+
+| Symbol | Meaning                                      | Example | Matches          |
+| ------ | -------------------------------------------- | ------- | ---------------- |
+| `\d`   | Digit (0–9)                                  | `\d{3}` | `123`            |
+| `\D`   | Non-digit                                    | `\D+`   | `abc`, `XYZ`     |
+| `\w`   | Word character (letters, digits, underscore) | `\w+`   | `hello_123`      |
+| `\W`   | Non-word character                           | `\W+`   | `!@#`, spaces    |
+| `\s`   | Whitespace (space, tab, newline)             | `a\sb`  | `a b`            |
+| `\S`   | Non-whitespace                               | `\S+`   | `hello`, `pizza` |
+
+---
+
+## 🟣 Groups & Alternation
+
+| Pattern | Meaning                               | Example          | Matches                |       |              |
+| ------- | ------------------------------------- | ---------------- | ---------------------- | ----- | ------------ |
+| `(abc)` | Grouping                              | `(ab)+`          | `ab`, `abab`, `ababab` |       |              |
+| `\1`    | Backreference (repeat previous group) | `(ha)\1`         | `haha`                 |       |              |
+| \`a     | b\`                                   | OR (alternation) | \`cat                  | dog\` | `cat`, `dog` |
+
+---
+
+## 🟤 Practical Examples
+
+### 🍕 Pizza Examples (Layman’s Way)
+
+1. **Find any pizza topping that ends with “oni”**
+   Regex: `\w+oni`
+   Matches: `pepperoni`, `zucchini` (but not `cheese`).
+
+2. **Find pizzas with “extra cheese” or “extra sauce”**
+   Regex: `extra (cheese|sauce)`
+   Matches: `extra cheese`, `extra sauce`.
+
+3. **Find numbers in menu prices**
+   Regex: `\d+`
+   Matches: `250`, `499`, `1000`.
+
+---
+
+### 🔢 Numbers & Words
+
+* Find **all 3-digit numbers**:
+  Regex → `\b\d{3}\b`
+  Matches: `123`, `456`
+
+* Find **words starting with capital letter**:
+  Regex → `\b[A-Z][a-z]+\b`
+  Matches: `Hello`, `Pizza`, `Regex`
+
+---
+
+### 📧 Emails
+
+Regex → `^[\w\.-]+@[\w\.-]+\.\w{2,3}$`
+Matches:
+✅ `test123@gmail.com`
+✅ `hello.world@company.org`
+❌ `invalid@com`
+
+---
+
+### 📞 Phone Numbers
+
+Regex → `^\+?[0-9]{10,13}$`
+Matches:
+✅ `9876543210`
+✅ `+919876543210`
+❌ `98765-43210`
+
+---
+
+### 🔐 Passwords (At least 8 chars, 1 number, 1 uppercase, 1 special char)
+
+Regex → `^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$`
+Matches:
+✅ `Hello@123`
+❌ `hello123` (missing uppercase + special char)
+
+---
+
+### 🌍 URLs
+
+Regex → `https?://[^\s/$.?#].[^\s]*`
+Matches:
+✅ `http://example.com`
+✅ `https://google.com`
+
+---
+
+## 📝 Summary
+
+* Use **regex** when you want to **search, extract, or validate patterns** in text.
+* It’s like giving your program **super-search powers** 🔍.
+* Start small (`.`, `\d`, `[a-z]`) → then move to **groups, backreferences, and lookaheads**.
+
