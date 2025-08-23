@@ -6,6 +6,7 @@
 
 A **class** is a blueprint for creating objects.
 
+
 ```python
 class Car:
     def __init__(self, brand, model):
