@@ -1,5 +1,3 @@
----
-
 # 🐍 Python OOPs Concepts – Notes
 
 ## 1️⃣ Class → Blueprint
