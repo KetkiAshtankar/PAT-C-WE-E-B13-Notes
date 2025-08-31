@@ -219,4 +219,117 @@ ON b.step = g.step;
 ---
 
 
+---
+
+
+
+### **Built-in methods**
+
+* **GROUP BY** → Imagine a teacher sorting students by class. All 5th standard kids together, 6th standard together.
+* **HAVING** → After grouping, you filter — e.g., “Show me only those classes with more than 10 students.”
+* **DISTINCT** → When friends tell you their favorite fruit, some repeat “mango.” You just want the *unique list* of fruits.
+
+---
+
+### ** Database Setup**
+
+```sql
+-- Step 1: Create database
+CREATE DATABASE employee_db;
+USE employee_db;
+
+-- Step 2: Create Employees table
+CREATE TABLE Employees (
+    emp_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    department VARCHAR(50),
+    age INT,
+    salary INT
+);
+
+-- Step 3: Insert sample data
+INSERT INTO Employees (emp_id, name, department, age, salary) VALUES
+(1, 'Amit', 'HR', 25, 40000),
+(2, 'Priya', 'HR', 28, 45000),
+(3, 'Rahul', 'IT', 25, 50000),
+(4, 'Sneha', 'IT', 30, 60000),
+(5, 'Kiran', 'Finance', 28, 55000),
+(6, 'Manoj', 'Finance', 28, 55000), -- duplicate salary for testing DISTINCT
+(7, 'Anita', 'HR', 35, 70000);
+```
+
+---
+
+### ** GROUP BY Demo**
+
+1. **Count employees per department**
+
+```sql
+SELECT department, COUNT(*) AS total_employees
+FROM Employees
+GROUP BY department;
+```
+
+2. **Find average salary per department**
+
+```sql
+SELECT department, AVG(salary) AS avg_salary
+FROM Employees
+GROUP BY department;
+```
+
+👉 *Layman*: Like calculating class-wise average marks.
+
+---
+
+### **HAVING Demo**
+
+1. **Show departments with more than 2 employees**
+
+```sql
+SELECT department, COUNT(*) AS total_employees
+FROM Employees
+GROUP BY department
+HAVING COUNT(*) > 2;
+```
+
+2. **Show departments where average salary is above 50,000**
+
+```sql
+SELECT department, AVG(salary) AS avg_salary
+FROM Employees
+GROUP BY department
+HAVING AVG(salary) > 50000;
+```
+
+👉 *Layman*: First group by class, then filter only the classes with more than 10 students.
+
+---
+
+### **DISTINCT Demo**
+
+1. **Show unique departments**
+
+```sql
+SELECT DISTINCT department FROM Employees;
+```
+
+2. **Show unique salaries**
+
+```sql
+SELECT DISTINCT salary FROM Employees;
+```
+
+👉 *Layman*: Just like filtering duplicate fruits in a list, keeping only unique ones.
+
+---
+
+✅ **Wrap-Up Summary**
+
+* **GROUP BY** → Categorize data.
+* **HAVING** → Filter grouped data.
+* **DISTINCT** → Remove duplicates.
+
+---
+
 
