@@ -278,7 +278,7 @@ FROM Employees
 GROUP BY department;
 ```
 
-👉 *Layman*: Like calculating class-wise average marks.
+👉 * *: Like calculating class-wise average marks.
 
 ---
 
@@ -302,7 +302,7 @@ GROUP BY department
 HAVING AVG(salary) > 50000;
 ```
 
-👉 *Layman*: First group by class, then filter only the classes with more than 10 students.
+👉 * *: First group by class, then filter only the classes with more than 10 students.
 
 ---
 
@@ -320,7 +320,7 @@ SELECT DISTINCT department FROM Employees;
 SELECT DISTINCT salary FROM Employees;
 ```
 
-👉 *Layman*: Just like filtering duplicate fruits in a list, keeping only unique ones.
+👉 * *: Just like filtering duplicate fruits in a list, keeping only unique ones.
 
 ---
 
@@ -333,3 +333,244 @@ SELECT DISTINCT salary FROM Employees;
 ---
 
 
+---
+
+# 🍴 Restaurant Normalisation Demo
+
+## Step 0: The Messy Table (Unnormalised Data)
+
+Imagine we store restaurant orders like this:
+
+```sql
+CREATE DATABASE restaurant_db;
+USE restaurant_db;
+
+CREATE TABLE messy_orders (
+    order_id INT,
+    customer_name VARCHAR(50),
+    dishes VARCHAR(100),   -- multiple dishes in one cell
+    dish_prices VARCHAR(100),
+    waiter_name VARCHAR(50),
+    waiter_phone VARCHAR(15)
+);
+
+INSERT INTO messy_orders VALUES
+(1, 'Amit', 'Paneer Butter Masala, Naan', '200, 30', 'Ravi', '9876543210'),
+(2, 'Sneha', 'Pizza, Coke', '300, 40', 'Ravi', '9876543210'),
+(3, 'Rahul', 'Burger, Fries, Coke', '150, 80, 40', 'Meena', '9123456789');
+
+SELECT * FROM messy_orders;
+```
+
+👉 Problems:
+
+* Multiple dishes in one cell (violates **1NF**).
+* Prices duplicated with dishes.
+* Waiter details repeated again and again.
+
+---
+
+## Step 1: Apply **1NF (First Normal Form)**
+
+**Rule:** Each cell should have only one value.
+
+👉 Break dishes into separate rows:
+
+```sql
+CREATE TABLE orders_1nf (
+    order_id INT,
+    customer_name VARCHAR(50),
+    dish_name VARCHAR(50),
+    dish_price INT,
+    waiter_name VARCHAR(50),
+    waiter_phone VARCHAR(15)
+);
+
+INSERT INTO orders_1nf VALUES
+(1, 'Amit', 'Paneer Butter Masala', 200, 'Ravi', '9876543210'),
+(1, 'Amit', 'Naan', 30, 'Ravi', '9876543210'),
+(2, 'Sneha', 'Pizza', 300, 'Ravi', '9876543210'),
+(2, 'Sneha', 'Coke', 40, 'Ravi', '9876543210'),
+(3, 'Rahul', 'Burger', 150, 'Meena', '9123456789'),
+(3, 'Rahul', 'Fries', 80, 'Meena', '9123456789'),
+(3, 'Rahul', 'Coke', 40, 'Meena', '9123456789');
+
+SELECT * FROM orders_1nf;
+```
+
+✅ Now each cell has atomic (single) values.
+❌ Still waiter details and dish prices repeat.
+
+---
+
+## Step 2: Apply **2NF (Second Normal Form)**
+
+**Rule:** Remove partial dependency. Separate repeating groups.
+
+👉 Split into **Orders**, **Order\_Details**, and **Dishes**:
+
+```sql
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    waiter_name VARCHAR(50),
+    waiter_phone VARCHAR(15)
+);
+
+CREATE TABLE dishes (
+    dish_id INT PRIMARY KEY,
+    dish_name VARCHAR(50),
+    dish_price INT
+);
+
+CREATE TABLE order_details (
+    order_id INT,
+    dish_id INT,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (dish_id) REFERENCES dishes(dish_id)
+);
+
+-- Insert data
+INSERT INTO orders VALUES
+(1, 'Amit', 'Ravi', '9876543210'),
+(2, 'Sneha', 'Ravi', '9876543210'),
+(3, 'Rahul', 'Meena', '9123456789');
+
+INSERT INTO dishes VALUES
+(101, 'Paneer Butter Masala', 200),
+(102, 'Naan', 30),
+(103, 'Pizza', 300),
+(104, 'Coke', 40),
+(105, 'Burger', 150),
+(106, 'Fries', 80);
+
+INSERT INTO order_details VALUES
+(1, 101), (1, 102),
+(2, 103), (2, 104),
+(3, 105), (3, 106), (3, 104);
+
+SELECT * FROM orders;
+SELECT * FROM dishes;
+SELECT * FROM order_details;
+```
+
+✅ Dish prices are now stored once in `dishes`.
+❌ Still waiter’s phone number is repeated for every order he serves.
+
+---
+
+## Step 3: Apply **3NF (Third Normal Form)**
+
+**Rule:** Remove transitive dependency (non-key depending on another non-key).
+
+👉 Extract **Waiters** into a separate table:
+
+```sql
+CREATE TABLE waiters (
+    waiter_id INT PRIMARY KEY,
+    waiter_name VARCHAR(50),
+    waiter_phone VARCHAR(15)
+);
+
+ALTER TABLE orders ADD waiter_id INT;
+ALTER TABLE orders DROP COLUMN waiter_name, DROP COLUMN waiter_phone;
+
+-- Insert waiters
+INSERT INTO waiters VALUES
+(1, 'Ravi', '9876543210'),
+(2, 'Meena', '9123456789');
+
+-- Update orders with waiter_id
+UPDATE orders SET waiter_id = 1 WHERE order_id IN (1,2);
+UPDATE orders SET waiter_id = 2 WHERE order_id = 3;
+
+SELECT * FROM waiters;
+SELECT * FROM orders;
+```
+
+✅ Now data is fully normalised:
+
+* **orders** → customer info + waiter\_id
+* **dishes** → dish name + price
+* **order\_details** → which order has which dish
+* **waiters** → waiter info stored once
+
+---
+
+# 🎯 Final Outcome for Freshers:
+
+* **Unnormalised Data** = messy restaurant notebook with repeated entries.
+* **1NF** = break combined values into single cells.
+* **2NF** = move repeating groups into separate tables.
+* **3NF** = remove indirect dependencies (waiter info separate).
+
+---
+
+---
+
+# ✅ Advantages of Normalisation 
+
+### 1. **Easy Updates (Avoids Repetition)**
+
+👉 Suppose **waiter Ravi changes his phone number**.
+
+* **Before Normalisation (messy/1NF table):**
+  Ravi’s phone number is copied in **every order he served**.
+  If he served 500 orders, you must update in **500 rows**.
+  If you miss one, data is inconsistent.
+
+* **After Normalisation (3NF, separate `waiters` table):**
+  Ravi’s phone number is stored **only once** in the `waiters` table.
+  Update in **one place → reflects everywhere**.
+
+---
+
+### 2. **No Redundant Data (Saves Space)**
+
+👉 Suppose **Paneer Butter Masala price changes from ₹200 to ₹220**.
+
+* **Before Normalisation:**
+  Price ₹200 is repeated in every order. You’d have to edit in many rows.
+  Lots of duplicate storage.
+
+* **After Normalisation (separate `dishes` table):**
+  Paneer Butter Masala price is stored **once** in the `dishes` table.
+  Change in one place → every order automatically reflects the new price.
+
+---
+
+### 3. **Better Consistency (No Conflicts)**
+
+👉 Suppose Coke is ₹40 in one row, ₹45 in another row (data entry mistake).
+Which is correct? Nobody knows ❌
+
+* **After Normalisation:**
+  Coke has only **one price entry** in `dishes`. No confusion ✅
+
+---
+
+### 4. **Easy Deletion (No Accidental Data Loss)**
+
+👉 Suppose you delete an order.
+
+* In messy table, you might **accidentally delete waiter or dish info** also.
+* In normalised tables, deleting from `orders` only affects that order; waiter and dishes stay safe.
+
+---
+
+### 5. **Better Search and Reporting**
+
+👉 Want to find **all orders served by Meena**?
+
+* Messy table → You have to filter through repeating names and phones.
+* Normalised table → Just filter by `waiter_id = 2`, and join with `orders`. Easy and fast.
+
+---
+
+# 🎯 Simple Analogy 
+* **Unnormalised:** Like writing *everything about every order in a diary* → repeated info, messy.
+* **Normalised:** Like keeping **one Menu card, one Waiter list, and one Orders log** → update once, use everywhere.
+
+👉 So whenever **a waiter changes number, a dish price changes, or new waiter joins**, you only update **one place** instead of hundreds of rows.
+
+---
